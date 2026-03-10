@@ -50,8 +50,102 @@ const styles = `
   .dl-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
   .dl-btn-label{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
   .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .freq-table-wrap{margin-bottom:24px}.freq-table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.freq-table-header h3{font-size:12px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:8px}.freq-filter-tabs{display:flex;gap:6px}.freq-filter-tab{font-size:10px;font-family:'Space Mono',monospace;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}.freq-filter-tab.active{border-color:var(--accent);color:var(--accent-light);background:rgba(108,92,231,0.08)}.freq-table{width:100%;border-collapse:collapse;font-size:13px}.freq-table th{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}.freq-table th:last-child,.freq-table td:last-child{text-align:center}.freq-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}.freq-table tr:last-child td{border-bottom:none}.freq-table tr:hover td{background:rgba(255,255,255,0.02)}.freq-kw{font-weight:500;color:var(--text)}.freq-count{font-family:'Space Mono',monospace;font-size:12px;font-weight:700}.freq-count.zero{color:var(--red)}.freq-count.match{color:var(--green)}.freq-count.over{color:var(--text-dim)}.freq-bar-cell{width:120px}.freq-mini-bar{height:4px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:3px}.freq-mini-fill{height:100%;border-radius:99px}.freq-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.freq-category{font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 `;
+
+// ── Keyword Frequency Table Component ────────────────────────────────────
+function KeywordFrequencyTable({ data }) {
+  const [filter, setFilter] = useState('all');
+  if (!data || data.length === 0) return null;
+
+  const jdOnly = data.filter(k => k.jd_count > 0);
+  const filtered = filter === 'all' ? jdOnly
+    : filter === 'missing' ? jdOnly.filter(k => k.status === 'missing')
+    : jdOnly.filter(k => k.status === 'matched');
+
+  const missingCount = jdOnly.filter(k => k.status === 'missing').length;
+  const matchedCount = jdOnly.filter(k => k.status === 'matched').length;
+  const maxJd = Math.max(...jdOnly.map(k => k.jd_count), 1);
+
+  const categoryColor = (kw) => {
+    const k = kw.toLowerCase();
+    if (['support','track','provide','facilitate','contribute','own','execute','identify','act','maintain'].includes(k)) return {bg:'rgba(84,160,255,0.08)',color:'var(--blue)',label:'verb'};
+    if (["bachelor's degree","vocational qualification","master's degree"].some(c => k.includes(c.split(' ')[0]))) return {bg:'rgba(254,202,87,0.08)',color:'var(--yellow)',label:'qual'};
+    return null;
+  };
+
+  return (
+    <div className="freq-table-wrap">
+      <div className="freq-table-header">
+        <h3>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Keyword Frequency
+        </h3>
+        <div className="freq-filter-tabs">
+          <button className={`freq-filter-tab ${filter==='all'?'active':''}`} onClick={()=>setFilter('all')}>All ({jdOnly.length})</button>
+          <button className={`freq-filter-tab ${filter==='missing'?'active':''}`} onClick={()=>setFilter('missing')}>Missing ({missingCount})</button>
+          <button className={`freq-filter-tab ${filter==='matched'?'active':''}`} onClick={()=>setFilter('matched')}>Matched ({matchedCount})</button>
+        </div>
+      </div>
+      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--radius)',overflow:'hidden'}}>
+        <table className="freq-table">
+          <thead>
+            <tr>
+              <th style={{width:20}}></th>
+              <th>Keyword</th>
+              <th style={{textAlign:'center'}}>Resume</th>
+              <th style={{textAlign:'center'}}>Job Description</th>
+              <th style={{width:130}}>JD Frequency</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((row, i) => {
+              const isMissing = row.status === 'missing';
+              const isOver = row.resume_count > row.jd_count * 2;
+              const cat = categoryColor(row.keyword);
+              return (
+                <tr key={i}>
+                  <td style={{paddingRight:0}}>
+                    <span className="freq-status-dot" style={{background: isMissing ? 'var(--red)' : 'var(--green)'}}/>
+                  </td>
+                  <td>
+                    <span className="freq-kw">{row.keyword}</span>
+                    {cat && <span className="freq-category" style={{background:cat.bg,color:cat.color,marginLeft:8}}>{cat.label}</span>}
+                  </td>
+                  <td style={{textAlign:'center'}}>
+                    {row.resume_count === 0
+                      ? <span style={{color:'var(--red)',fontSize:16,lineHeight:1}}>×</span>
+                      : <span className={`freq-count ${isOver?'over':'match'}`}>{row.resume_count}</span>
+                    }
+                  </td>
+                  <td style={{textAlign:'center'}}>
+                    <span className="freq-count" style={{color:'var(--text-dim)'}}>{row.jd_count}</span>
+                  </td>
+                  <td className="freq-bar-cell">
+                    <div style={{display:'flex',alignItems:'center',gap:6}}>
+                      <div className="freq-mini-bar" style={{flex:1}}>
+                        <div className="freq-mini-fill" style={{
+                          width:`${(row.jd_count/maxJd)*100}%`,
+                          background: isMissing
+                            ? row.jd_count >= 3 ? 'var(--red)' : 'rgba(255,107,107,0.5)'
+                            : 'var(--green)'
+                        }}/>
+                      </div>
+                      {isMissing && row.jd_count >= 3 && (
+                        <span style={{fontSize:9,fontFamily:"'Space Mono',monospace",color:'var(--red)',whiteSpace:'nowrap'}}>HIGH</span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 const DEMO_HTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>@page{size:A4;margin:20mm 18mm}body{font-family:Calibri,Arial,sans-serif;color:#1a1a1a;line-height:1.45;font-size:11pt;max-width:720px;margin:0 auto;padding:30px 40px}h1{font-size:20pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2px}.contact{font-size:9.5pt;color:#444;margin-bottom:14px}hr{border:none;border-top:2px solid #1a1a1a;margin:0 0 12px}.section-title{font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-bottom:1.5px solid #333;padding-bottom:2px;margin:14px 0 8px}.summary{font-size:10.5pt;color:#222;line-height:1.55;margin-bottom:14px}.skills-row{margin-bottom:4px;font-size:10.5pt}.skills-row strong{color:#000}.job{margin-bottom:12px}.job-line1{display:flex;justify-content:space-between;margin-bottom:1px}.job-title{font-weight:700;font-size:11pt}.job-dates{font-size:9.5pt;color:#444}.job-company{font-size:10.5pt;color:#333;margin-bottom:3px}ul{padding-left:16px;margin:0}li{font-size:10.5pt;margin-bottom:2px;line-height:1.5}.edu-line1{display:flex;justify-content:space-between}.edu-degree{font-weight:700;font-size:10.5pt}.edu-dates{font-size:9.5pt;color:#444}.edu-school{font-size:10.5pt;color:#333}@media print{body{padding:0}}</style></head><body><h1>John Doe</h1><div class="contact">john.doe@email.com | (555) 123-4567 | San Francisco, CA | linkedin.com/in/johndoe</div><hr><div class="summary">Senior Frontend Engineer with 5+ years building high-performance React and TypeScript applications at scale. Experienced in architecting serverless microservices on AWS, implementing CI/CD pipelines with GitHub Actions, and mentoring cross-functional teams. Passionate about delivering exceptional user experiences through clean, type-safe code and modern frontend practices.</div><div class="section-title">Technical Skills</div><div class="skills-row"><strong>Languages:</strong> TypeScript, JavaScript (ES6+), HTML5, CSS3, Sass</div><div class="skills-row"><strong>Frameworks:</strong> React, Next.js, Node.js, Express, GraphQL</div><div class="skills-row"><strong>Tools & Cloud:</strong> Docker, AWS (Lambda, S3, CloudFront), GitHub Actions, Jest, Cypress</div><div class="section-title">Professional Experience</div><div class="job"><div class="job-line1"><span class="job-title">Senior Frontend Developer</span><span class="job-dates">Jan 2021 - Present</span></div><div class="job-company">TechCorp Inc., San Francisco, CA</div><ul><li>Architected and delivered 5+ production-grade React/TypeScript SPAs serving 50K+ daily active users, reducing page load times by 40% through code splitting and lazy loading</li><li>Implemented end-to-end CI/CD pipelines using GitHub Actions, achieving 99.9% deployment success rate and reducing release cycles from 2 weeks to daily</li><li>Containerized frontend development environment using Docker, streamlining onboarding from 2 hours to 15 minutes for new team members</li><li>Collaborated cross-functionally with product, design, and backend teams to deliver 20+ features aligned with business objectives</li></ul></div><div class="job"><div class="job-line1"><span class="job-title">Frontend Developer</span><span class="job-dates">Jun 2018 - Dec 2020</span></div><div class="job-company">StartupXYZ, Remote</div><ul><li>Developed responsive web applications using React and JavaScript, serving 15K+ monthly users across desktop and mobile platforms</li><li>Optimized application performance through implementing GraphQL APIs, reducing data overfetching by 60% and improving Core Web Vitals</li><li>Built comprehensive unit and integration test suites using Jest and Cypress, achieving 85% code coverage</li></ul></div><div class="section-title">Education</div><div class="edu-line1"><span class="edu-degree">B.S. Computer Science</span><span class="edu-dates">2018</span></div><div class="edu-school">State University</div><div class="section-title">Certifications</div><div style="font-size:10.5pt">AWS Certified Developer Associate | Google Analytics Certified</div></body></html>`;
 
@@ -65,7 +159,23 @@ const DEMO_RESULT = {
   optimized_bullets:[{original:"Built web applications using React",improved:"Architected 5+ production React/TypeScript SPAs serving 50K+ users, reducing load times by 40%",keywords_added:["TypeScript","SPA"]},{original:"Worked with team to deploy features",improved:"Collaborated cross-functionally to deploy 20+ features via CI/CD pipelines (GitHub Actions), achieving 99.9% uptime",keywords_added:["CI/CD","GitHub Actions"]}],
   new_bullets_suggested:[{bullet:"Containerized frontend build with Docker, cutting setup time from 2hr to 15min",reason:"Addresses Docker gap",keywords_covered:["Docker"]}],
   optimization_plan:{optimized_summary:"Senior Frontend Engineer with 5+ years building high-performance React and TypeScript applications at scale.",skills_section_fix:{add_skills:["TypeScript","GraphQL","Docker","Jest"],remove_skills:["jQuery"],suggested_categories:[{category:"Languages",skills:["TypeScript","JavaScript","HTML5","CSS3"]},{category:"Frameworks",skills:["React","Next.js","Node.js"]},{category:"Tools",skills:["Docker","AWS","GitHub Actions","Jest"]}]},formatting_recommendations:["Move Skills below summary","Use standard headers"],final_action_items:[{priority:1,action:"Add TypeScript to skills AND 3+ bullets",impact:"high"},{priority:2,action:"Create categorized Technical Skills section",impact:"high"},{priority:3,action:"Rewrite summary with JD keywords",impact:"high"},{priority:4,action:"Add Docker and CI/CD to bullets",impact:"medium"},{priority:5,action:"Quantify every achievement",impact:"medium"}]},
-  optimized_resume_html: DEMO_HTML
+  optimized_resume_html: DEMO_HTML,
+  keyword_frequency_table: [
+    {keyword:"TypeScript",jd_count:6,resume_count:0,status:"missing",gap:6},
+    {keyword:"React",jd_count:5,resume_count:4,status:"matched",gap:1},
+    {keyword:"Docker",jd_count:4,resume_count:0,status:"missing",gap:4},
+    {keyword:"Node.js",jd_count:4,resume_count:2,status:"matched",gap:2},
+    {keyword:"GraphQL",jd_count:3,resume_count:0,status:"missing",gap:3},
+    {keyword:"CI/CD",jd_count:3,resume_count:0,status:"missing",gap:3},
+    {keyword:"AWS",jd_count:3,resume_count:1,status:"matched",gap:2},
+    {keyword:"Jest",jd_count:2,resume_count:1,status:"matched",gap:1},
+    {keyword:"GitHub Actions",jd_count:2,resume_count:1,status:"matched",gap:1},
+    {keyword:"Collaboration",jd_count:2,resume_count:0,status:"missing",gap:2},
+    {keyword:"Communication",jd_count:1,resume_count:0,status:"missing",gap:1},
+    {keyword:"Architect",jd_count:2,resume_count:1,status:"matched",gap:1},
+    {keyword:"Deliver",jd_count:2,resume_count:2,status:"matched",gap:0},
+    {keyword:"Optimize",jd_count:1,resume_count:1,status:"matched",gap:0},
+  ]
 };
 
 function Accordion({title,icon,color,children,defaultOpen=false}){const[open,setOpen]=useState(defaultOpen);return(<div className="accordion"><div className="accordion-header" onClick={()=>setOpen(!open)}><h3 style={{color:`var(--${color})`}}>{icon} {title}</h3><ChevronIcon open={open}/></div>{open&&<div className="accordion-body">{children}</div>}</div>)}
@@ -179,6 +289,10 @@ export default function ResumeOptimizer(){
           <div className="card"><h3 className="green"><CheckIcon/> Matched ({(r.matched_keywords||[]).length})</h3><div className="tag-list">{(r.matched_keywords||[]).map((k,i)=><span key={i} className="tag green">{k}</span>)}</div></div>
           <div className="card"><h3 className="red"><XIcon/> Missing ({(r.missing_keywords||[]).length})</h3><div className="tag-list">{(r.missing_keywords||[]).map((k,i)=><span key={i} className="tag red">{k}</span>)}</div></div>
         </div>
+
+        {(r.keyword_frequency_table||[]).length>0&&(
+          <KeywordFrequencyTable data={r.keyword_frequency_table}/>
+        )}
 
         {r.jd_analysis&&(<Accordion title="Stage 1 — JD Analysis" icon="01" color="blue"><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginTop:4}}><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--blue)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Hard Skills</div><div className="tag-list">{(r.jd_analysis.hard_skills||[]).map((s,i)=><span key={i} className="tag blue">{typeof s==='string'?s:`${s.skill} (${s.frequency_score})`}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--accent-light)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Soft Skills</div><div className="tag-list">{(r.jd_analysis.soft_skills||[]).map((s,i)=><span key={i} className="tag accent">{s}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Tools & Tech</div><div className="tag-list">{(r.jd_analysis.tools_tech||[]).map((s,i)=><span key={i} className="tag yellow">{s}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--text-dim)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Industry Terms</div><div className="tag-list">{(r.jd_analysis.industry_terms||[]).map((s,i)=><span key={i} className="tag neutral">{s}</span>)}</div></div></div>{(r.jd_analysis.action_verbs||[]).length>0&&(<div style={{marginTop:16}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--green)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Action Verbs</div><div className="tag-list">{r.jd_analysis.action_verbs.map((v,i)=><span key={i} className="tag green">{v}</span>)}</div></div>)}</Accordion>)}
 
