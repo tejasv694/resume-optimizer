@@ -47,7 +47,9 @@ const styles = `
   .dl-btn.primary{background:var(--green);color:#000;box-shadow:0 4px 20px rgba(0,206,201,0.25)}.dl-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,206,201,0.35)}
   .dl-btn.secondary{background:var(--accent);color:white;box-shadow:0 4px 20px var(--accent-glow)}.dl-btn.secondary:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--accent-glow)}
   .dl-btn.tertiary{background:var(--surface-2);border:1px solid var(--border);color:var(--text)}.dl-btn.tertiary:hover{background:var(--surface-3);transform:translateY(-1px)}
+  .dl-btn.cover{background:var(--yellow);color:#000;box-shadow:0 4px 20px rgba(254,202,87,0.25)}.dl-btn.cover:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(254,202,87,0.35)}
   .dl-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+  .cover-letter-section{background:linear-gradient(135deg,rgba(254,202,87,0.05),rgba(254,202,87,0.02));border:1px solid rgba(254,202,87,0.15);border-radius:var(--radius);padding:24px;margin-top:16px}.cover-letter-section h3{font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:8px;display:flex;align-items:center;gap:8px}.cover-letter-section .cl-meta{font-size:12px;color:var(--text-dim);font-family:'Space Mono',monospace;margin-bottom:16px;display:flex;gap:16px}.cover-letter-section .cl-body{font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap;background:var(--surface-2);border-radius:var(--radius-sm);padding:20px;margin-bottom:16px;max-height:320px;overflow-y:auto}.cover-letter-section .cl-keywords{display:flex;flex-wrap:wrap;gap:6px}
   .dl-btn-label{font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
   .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .freq-table-wrap{margin-bottom:24px}.freq-table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.freq-table-header h3{font-size:12px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:8px}.freq-filter-tabs{display:flex;gap:6px}.freq-filter-tab{font-size:10px;font-family:'Space Mono',monospace;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}.freq-filter-tab.active{border-color:var(--accent);color:var(--accent-light);background:rgba(108,92,231,0.08)}.freq-table{width:100%;border-collapse:collapse;font-size:13px}.freq-table th{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}.freq-table th:last-child,.freq-table td:last-child{text-align:center}.freq-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}.freq-table tr:last-child td{border-bottom:none}.freq-table tr:hover td{background:rgba(255,255,255,0.02)}.freq-kw{font-weight:500;color:var(--text)}.freq-count{font-family:'Space Mono',monospace;font-size:12px;font-weight:700}.freq-count.zero{color:var(--red)}.freq-count.match{color:var(--green)}.freq-count.over{color:var(--text-dim)}.freq-bar-cell{width:120px}.freq-mini-bar{height:4px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:3px}.freq-mini-fill{height:100%;border-radius:99px}.freq-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.freq-category{font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
@@ -160,6 +162,17 @@ const DEMO_RESULT = {
   new_bullets_suggested:[{bullet:"Containerized frontend build with Docker, cutting setup time from 2hr to 15min",reason:"Addresses Docker gap",keywords_covered:["Docker"]}],
   optimization_plan:{optimized_summary:"Senior Frontend Engineer with 5+ years building high-performance React and TypeScript applications at scale.",skills_section_fix:{add_skills:["TypeScript","GraphQL","Docker","Jest"],remove_skills:["jQuery"],suggested_categories:[{category:"Languages",skills:["TypeScript","JavaScript","HTML5","CSS3"]},{category:"Frameworks",skills:["React","Next.js","Node.js"]},{category:"Tools",skills:["Docker","AWS","GitHub Actions","Jest"]}]},formatting_recommendations:["Move Skills below summary","Use standard headers"],final_action_items:[{priority:1,action:"Add TypeScript to skills AND 3+ bullets",impact:"high"},{priority:2,action:"Create categorized Technical Skills section",impact:"high"},{priority:3,action:"Rewrite summary with JD keywords",impact:"high"},{priority:4,action:"Add Docker and CI/CD to bullets",impact:"medium"},{priority:5,action:"Quantify every achievement",impact:"medium"}]},
   optimized_resume_html: DEMO_HTML,
+  cover_letter: {
+    cover_letter: "I am excited to apply for the Senior Frontend Engineer position. With over 5 years of experience building high-performance React and TypeScript applications, I am confident in my ability to contribute meaningfully to your team.\n\nIn my current role at TechCorp, I architected 5+ production-grade SPAs serving 50K+ daily users, reducing load times by 40% through code splitting. I implemented CI/CD pipelines achieving 99.9% deployment success and containerized our development environment with Docker, cutting onboarding time from 2 hours to 15 minutes.\n\nWhile my background is primarily in frontend systems, I am eager to deepen my expertise in GraphQL and serverless AWS architectures — areas I have explored on personal projects and am enthusiastic to grow further in a professional context.\n\nI would welcome the opportunity to discuss how my skills align with your needs. I am available for an interview at your convenience and can be reached at john.doe@email.com.",
+    greeting: "Dear Hiring Manager,",
+    candidate_name: "John Doe",
+    job_title: "Senior Frontend Engineer",
+    company_name: null,
+    keywords_included: ["React","TypeScript","CI/CD","Docker","SPA","AWS","GraphQL"],
+    word_count: 178
+  },
+  cover_letter_html: null,
+  cover_letter_filename: "John_Doe_Cover_Letter.html",
   keyword_frequency_table: [
     {keyword:"TypeScript",jd_count:6,resume_count:0,status:"missing",gap:6},
     {keyword:"React",jd_count:5,resume_count:4,status:"matched",gap:1},
@@ -205,11 +218,11 @@ export default function ResumeOptimizer(){
   };
 
   // Download raw HTML
-  const downloadHtml=(htmlContent)=>{
+  const downloadHtml=(htmlContent, filename='Optimized_Resume.html')=>{
     const blob=new Blob([htmlContent],{type:'text/html'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
-    a.href=url;a.download='Optimized_Resume.html';
+    a.href=url;a.download=filename;
     document.body.appendChild(a);a.click();
     document.body.removeChild(a);URL.revokeObjectURL(url);
   };
@@ -275,6 +288,10 @@ export default function ResumeOptimizer(){
               <button className="dl-btn tertiary" onClick={()=>downloadHtml(r.optimized_resume_html)}><DownloadIcon/> Download HTML</button>
               <div className="dl-btn-label">Raw file</div>
             </div>
+            {r.cover_letter_html&&(<div style={{textAlign:"center"}}>
+              <button className="dl-btn cover" onClick={()=>downloadHtml(r.cover_letter_html,r.cover_letter_filename||'Cover_Letter.html')}><FileTextIcon/> Cover Letter</button>
+              <div className="dl-btn-label">Download</div>
+            </div>)}
           </div>
         </div>)}
 
@@ -307,6 +324,31 @@ export default function ResumeOptimizer(){
         {plan.skills_section_fix?.suggested_categories&&(<Accordion title="Stage 5 — Skills Reorganization" icon="05" color="accent-light">{(plan.skills_section_fix.add_skills||[]).length>0&&(<div style={{marginBottom:12}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--green)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Add</div><div className="tag-list">{plan.skills_section_fix.add_skills.map((s,i)=><span key={i} className="tag green">+ {s}</span>)}</div></div>)}{(plan.skills_section_fix.remove_skills||[]).length>0&&(<div style={{marginBottom:12}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--red)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Remove</div><div className="tag-list">{plan.skills_section_fix.remove_skills.map((s,i)=><span key={i} className="tag red">- {s}</span>)}</div></div>)}<div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--accent-light)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Layout</div><div className="skills-grid">{plan.skills_section_fix.suggested_categories.map((cat,i)=>(<div key={i} style={{background:"var(--surface-2)",borderRadius:8,padding:12}}><div style={{fontWeight:600,fontSize:12,marginBottom:6}}>{cat.category}</div><div className="tag-list">{cat.skills.map((s,j)=><span key={j} className="tag neutral">{s}</span>)}</div></div>))}</div></Accordion>)}
 
         {(plan.final_action_items||[]).length>0&&(<div className="card" style={{marginTop:8}}><h3 className="accent"><SparkleIcon size={14}/> Action Items</h3>{plan.final_action_items.map((item,i)=>(<div className="action-item" key={i}><div className={`action-num ${item.impact||'medium'}`}>{item.priority||i+1}</div><div><div className="action-text">{item.action}</div><div className="action-impact" style={{color:item.impact==='high'?'var(--red)':item.impact==='medium'?'var(--yellow)':'var(--green)'}}>{item.impact} impact</div></div></div>))}</div>)}
+
+        {r.cover_letter&&(<div className="cover-letter-section">
+          <h3>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Cover Letter
+          </h3>
+          <div className="cl-meta">
+            {r.cover_letter.job_title&&<span>Role: {r.cover_letter.job_title}</span>}
+            {r.cover_letter.word_count&&<span>Words: {r.cover_letter.word_count}</span>}
+            {r.cover_letter.keywords_included&&<span>Keywords: {r.cover_letter.keywords_included.length} included</span>}
+          </div>
+          <div className="cl-body">{r.cover_letter.greeting}{'\n\n'}{r.cover_letter.cover_letter}{'\n\nSincerely,\n'}{r.cover_letter.candidate_name}</div>
+          {(r.cover_letter.keywords_included||[]).length>0&&(
+            <div>
+              <div style={{fontSize:10,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Keywords included</div>
+              <div className="cl-keywords">{r.cover_letter.keywords_included.map((k,i)=><span key={i} className="tag yellow">{k}</span>)}</div>
+            </div>
+          )}
+          {r.cover_letter_html&&(
+            <div style={{marginTop:16,display:'flex',gap:10,flexWrap:'wrap'}}>
+              <button className="dl-btn cover" style={{fontSize:13,padding:'10px 20px'}} onClick={()=>downloadHtml(r.cover_letter_html,r.cover_letter_filename||'Cover_Letter.html')}><DownloadIcon/> Download Cover Letter</button>
+              <button className="dl-btn tertiary" style={{fontSize:13,padding:'10px 20px'}} onClick={()=>saveAsPdf(r.cover_letter_html)}><PdfIcon/> Save as PDF</button>
+            </div>
+          )}
+        </div>)}
       </div>)}
     </div></>
   );
