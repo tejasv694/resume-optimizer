@@ -54,6 +54,45 @@ const styles = `
   .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .freq-table-wrap{margin-bottom:24px}.freq-table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.freq-table-header h3{font-size:12px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:8px}.freq-filter-tabs{display:flex;gap:6px}.freq-filter-tab{font-size:10px;font-family:'Space Mono',monospace;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}.freq-filter-tab.active{border-color:var(--accent);color:var(--accent-light);background:rgba(108,92,231,0.08)}.freq-table{width:100%;border-collapse:collapse;font-size:13px}.freq-table th{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}.freq-table th:last-child,.freq-table td:last-child{text-align:center}.freq-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}.freq-table tr:last-child td{border-bottom:none}.freq-table tr:hover td{background:rgba(255,255,255,0.02)}.freq-kw{font-weight:500;color:var(--text)}.freq-count{font-family:'Space Mono',monospace;font-size:12px;font-weight:700}.freq-count.zero{color:var(--red)}.freq-count.match{color:var(--green)}.freq-count.over{color:var(--text-dim)}.freq-bar-cell{width:120px}.freq-mini-bar{height:4px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:3px}.freq-mini-fill{height:100%;border-radius:99px}.freq-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.freq-category{font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── Inline Diff Bullets (Jobscan style) ───────────────────────── */
+  .diff-bullet-block{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
+  .diff-bullet-block:hover{border-color:var(--green);background:rgba(0,206,201,0.03)}
+  .diff-text{font-size:13px;line-height:1.7;color:var(--text);margin-bottom:6px}
+  .diff-keep{color:var(--text)}
+  .diff-remove{color:var(--red);text-decoration:line-through;opacity:.65}
+  .diff-add{color:var(--green);font-weight:500}
+  .diff-note{font-size:11px;color:var(--text-muted);margin-top:6px;font-style:italic}
+  .diff-copy-hint{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.5px;color:var(--text-muted);margin-top:8px;display:flex;align-items:center;gap:5px;transition:color .2s}
+  .diff-bullet-block:hover .diff-copy-hint{color:var(--green)}
+  .diff-copy-hint.copied{color:var(--green)}
+
+  /* ── Suggested Bullets Section ─────────────────────────────────── */
+  .sugg-section{margin-top:8px;border:1px solid rgba(254,202,87,0.2);border-radius:var(--radius);overflow:hidden}
+  .sugg-section-header{background:linear-gradient(135deg,rgba(254,202,87,0.07),rgba(254,202,87,0.02));padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .2s;border-bottom:1px solid rgba(254,202,87,0.12)}.sugg-section-header:hover{background:rgba(254,202,87,0.06)}
+  .sugg-section-title{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--yellow)}
+  .sugg-badge{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;background:rgba(254,202,87,0.1);color:var(--yellow);border:1px solid rgba(254,202,87,0.2);padding:3px 10px;border-radius:99px}
+  .sugg-section-body{background:var(--surface);padding:20px}
+  .sugg-section-desc{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:18px;padding:10px 14px;background:rgba(254,202,87,0.04);border-left:2px solid rgba(254,202,87,0.3);border-radius:0 6px 6px 0}
+  .sugg-keyword-block{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}.sugg-keyword-block:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+  .sugg-keyword-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .sugg-keyword-name{font-size:13px;font-weight:700;color:var(--text)}
+  .sugg-keyword-cat{font-size:9px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:4px}
+  .sugg-keyword-cat.hard{background:rgba(108,92,231,0.1);color:var(--accent-light);border:1px solid rgba(108,92,231,0.2)}
+  .sugg-keyword-cat.industry{background:rgba(84,160,255,0.08);color:var(--blue);border:1px solid rgba(84,160,255,0.2)}
+  .sugg-keyword-cat.tools{background:rgba(0,206,201,0.08);color:var(--green);border:1px solid rgba(0,206,201,0.2)}
+  .sugg-keyword-cat.soft{background:rgba(255,107,107,0.08);color:var(--red);border:1px solid rgba(255,107,107,0.2)}
+  .sugg-note{font-size:11px;color:var(--text-muted);font-style:italic;margin-bottom:10px}
+  .sugg-options{display:flex;flex-direction:column;gap:8px}
+  .sugg-option{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;position:relative;text-align:left;width:100%}
+  .sugg-option:hover{border-color:var(--yellow);background:rgba(254,202,87,0.04);transform:translateX(2px)}
+  .sugg-option.copied{border-color:var(--green);background:rgba(0,206,201,0.05)}
+  .sugg-option-num{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;flex-shrink:0;background:rgba(254,202,87,0.1);color:var(--yellow);border:1px solid rgba(254,202,87,0.2);margin-top:1px}
+  .sugg-option-text{font-size:13px;line-height:1.6;color:var(--text);flex:1}
+  .sugg-option-copy{font-size:9px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);flex-shrink:0;margin-top:3px;transition:color .2s}
+  .sugg-option:hover .sugg-option-copy{color:var(--yellow)}
+  .sugg-option.copied .sugg-option-copy{color:var(--green)}
+  .sugg-empty{font-size:13px;color:var(--text-dim);padding:12px;text-align:center}
 `;
 
 // ── Keyword Frequency Table Component ────────────────────────────────────
@@ -158,10 +197,90 @@ const DEMO_RESULT = {
   jd_analysis:{hard_skills:[{skill:"TypeScript",frequency_score:6},{skill:"React",frequency_score:5},{skill:"Node.js",frequency_score:4}],soft_skills:["Collaboration","Communication","Problem-solving"],certifications:["AWS Certified Developer"],tools_tech:["React","TypeScript","Node.js","GraphQL","Docker","Jest","GitHub Actions"],industry_terms:["microservices","serverless","SPA","SSR"],action_verbs:["Architect","Implement","Optimize","Collaborate","Deliver"]},
   keyword_variations:{"TypeScript":["TS","typed JavaScript"],"CI/CD":["continuous integration","build pipeline"],"Docker":["containerization","containers"]},
   ats_details:{skill_gaps:[{skill:"TypeScript",importance:"critical",suggestion:"Add to skills and bullets"},{skill:"Docker",importance:"high",suggestion:"Mention containerization"}],format_issues:["Add Technical Skills section","Use standard headers"]},
-  optimized_bullets:[{original:"Built web applications using React",improved:"Architected 5+ production React/TypeScript SPAs serving 50K+ users, reducing load times by 40%",keywords_added:["TypeScript","SPA"]},{original:"Worked with team to deploy features",improved:"Collaborated cross-functionally to deploy 20+ features via CI/CD pipelines (GitHub Actions), achieving 99.9% uptime",keywords_added:["CI/CD","GitHub Actions"]}],
+  optimized_bullets:[
+    {
+      original:"Built web applications using React",
+      improved:"Architected 5+ production React/TypeScript SPAs serving 50K+ users, reducing load times by 40%",
+      keywords_added:["TypeScript","SPA"],
+      improvement_notes:"Aktionsverb gestärkt, TypeScript und messbare Ergebnisse ergänzt",
+      diff_segments:[
+        {type:"remove",text:"Built web applications"},
+        {type:"add",text:"Architected 5+ production React/TypeScript SPAs serving 50K+ users, reducing load times by 40%"},
+        {type:"remove",text:" using React"}
+      ]
+    },
+    {
+      original:"Worked with team to deploy features",
+      improved:"Collaborated cross-functionally to deploy 20+ features via CI/CD pipelines (GitHub Actions), achieving 99.9% uptime",
+      keywords_added:["CI/CD","GitHub Actions"],
+      improvement_notes:"CI/CD und GitHub Actions eingebaut, Ergebnis quantifiziert",
+      diff_segments:[
+        {type:"remove",text:"Worked with team"},
+        {type:"add",text:"Collaborated cross-functionally"},
+        {type:"keep",text:" to deploy "},
+        {type:"add",text:"20+ features via CI/CD pipelines (GitHub Actions), achieving 99.9% uptime"},
+        {type:"remove",text:"features"}
+      ]
+    },
+    {
+      original:"Analyzed sales data to create reports",
+      improved:"Analyzed sales data using SQL to create automated reports, reducing manual effort by 3h/week",
+      keywords_added:["SQL"],
+      improvement_notes:"SQL als Methode ergänzt, Zeitersparnis quantifiziert",
+      diff_segments:[
+        {type:"keep",text:"Analyzed sales data "},
+        {type:"add",text:"using SQL "},
+        {type:"keep",text:"to create "},
+        {type:"add",text:"automated "},
+        {type:"keep",text:"reports"},
+        {type:"add",text:", reducing manual effort by 3h/week"}
+      ]
+    }
+  ],
   new_bullets_suggested:[{bullet:"Containerized frontend build with Docker, cutting setup time from 2hr to 15min",reason:"Addresses Docker gap",keywords_covered:["Docker"]}],
   optimization_plan:{optimized_summary:"Senior Frontend Engineer with 5+ years building high-performance React and TypeScript applications at scale.",skills_section_fix:{add_skills:["TypeScript","GraphQL","Docker","Jest"],remove_skills:["jQuery"],suggested_categories:[{category:"Languages",skills:["TypeScript","JavaScript","HTML5","CSS3"]},{category:"Frameworks",skills:["React","Next.js","Node.js"]},{category:"Tools",skills:["Docker","AWS","GitHub Actions","Jest"]}]},formatting_recommendations:["Move Skills below summary","Use standard headers"],final_action_items:[{priority:1,action:"Add TypeScript to skills AND 3+ bullets",impact:"high"},{priority:2,action:"Create categorized Technical Skills section",impact:"high"},{priority:3,action:"Rewrite summary with JD keywords",impact:"high"},{priority:4,action:"Add Docker and CI/CD to bullets",impact:"medium"},{priority:5,action:"Quantify every achievement",impact:"medium"}]},
   optimized_resume_html: DEMO_HTML,
+  injection_report: {
+    total_missing_keywords: 4,
+    woven_into_bullets: 1,
+    added_to_skills_section: 4,
+    suggested_bullets_generated: 3,
+    bullets_sanitized: 0,
+    still_missing: [],
+    verified: true,
+    log: [
+      {
+        keyword: "GraphQL",
+        category: "tools",
+        note: "Could not be woven into an existing bullet — pick the option that best fits your experience and edit to add your own numbers/context.",
+        options: [
+          "Leveraged GraphQL to streamline API data fetching, reducing over-fetching by an estimated 40% and improving frontend response times across key product flows.",
+          "Applied GraphQL schema design principles to consolidate multiple REST endpoints into a single query layer, cutting network requests and improving developer experience.",
+          "Utilized GraphQL subscriptions to implement real-time data updates, enabling live dashboard functionality and improving user engagement metrics."
+        ]
+      },
+      {
+        keyword: "CI/CD",
+        category: "hard",
+        note: "Could not be woven into an existing bullet — pick the option that best fits your experience and edit to add your own numbers/context.",
+        options: [
+          "Implemented CI/CD pipelines to automate build, test, and deployment workflows, reducing manual release effort and improving deployment reliability across environments.",
+          "Applied CI/CD best practices to establish a consistent release cadence, enabling the team to ship features faster with reduced rollback incidents.",
+          "Utilized CI/CD tooling to enforce automated test gates before production deployments, contributing to a measurable reduction in post-release defects."
+        ]
+      },
+      {
+        keyword: "Docker",
+        category: "tools",
+        note: "Could not be woven into an existing bullet — pick the option that best fits your experience and edit to add your own numbers/context.",
+        options: [
+          "Leveraged Docker to containerize the development environment, ensuring consistent behaviour across local, staging, and production and cutting onboarding setup time significantly.",
+          "Applied Docker-based containerization to package and deploy microservices independently, improving scalability and reducing environment-specific deployment issues.",
+          "Utilized Docker Compose to orchestrate multi-service local environments, enabling the team to run the full stack locally without manual configuration overhead."
+        ]
+      }
+    ]
+  },
   cover_letter: {
     cover_letter: "I am excited to apply for the Senior Frontend Engineer position. With over 5 years of experience building high-performance React and TypeScript applications, I am confident in my ability to contribute meaningfully to your team.\n\nIn my current role at TechCorp, I architected 5+ production-grade SPAs serving 50K+ daily users, reducing load times by 40% through code splitting. I implemented CI/CD pipelines achieving 99.9% deployment success and containerized our development environment with Docker, cutting onboarding time from 2 hours to 15 minutes.\n\nWhile my background is primarily in frontend systems, I am eager to deepen my expertise in GraphQL and serverless AWS architectures — areas I have explored on personal projects and am enthusiastic to grow further in a professional context.\n\nI would welcome the opportunity to discuss how my skills align with your needs. I am available for an interview at your convenience and can be reached at john.doe@email.com.",
     greeting: "Dear Hiring Manager,",
@@ -193,6 +312,197 @@ const DEMO_RESULT = {
 
 function Accordion({title,icon,color,children,defaultOpen=false}){const[open,setOpen]=useState(defaultOpen);return(<div className="accordion"><div className="accordion-header" onClick={()=>setOpen(!open)}><h3 style={{color:`var(--${color})`}}>{icon} {title}</h3><ChevronIcon open={open}/></div>{open&&<div className="accordion-body">{children}</div>}</div>)}
 function ScoreRing({score,color}){const r=30,c=2*Math.PI*r,offset=c-(score/100)*c;return(<div className="score-ring"><svg width="72" height="72" viewBox="0 0 72 72"><circle className="bg" cx="36" cy="36" r={r} fill="none" strokeWidth="6"/><circle className="fg" cx="36" cy="36" r={r} fill="none" strokeWidth="6" stroke={color} strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"/></svg><div className="score-text" style={{color}}>{score}</div></div>)}
+
+// ── Inline Diff Bullet — Jobscan-style ──────────────────────────────────
+function InlineDiffBullet({ bullet }) {
+  const [copied, setCopied] = useState(false);
+
+  // Build diff segments: use AI-provided diff_segments if present,
+  // otherwise fall back to a simple whole-bullet diff
+  const segments = bullet.diff_segments && bullet.diff_segments.length > 0
+    ? bullet.diff_segments
+    : buildFallbackDiff(bullet.original || '', bullet.improved || '');
+
+  function buildFallbackDiff(orig, improved) {
+    // Word-level diff fallback when AI doesn't return diff_segments
+    const origWords  = orig.trim().split(/(\s+)/);
+    const impWords   = improved.trim().split(/(\s+)/);
+
+    // Find longest common prefix
+    let prefixLen = 0;
+    while (prefixLen < origWords.length && prefixLen < impWords.length &&
+           origWords[prefixLen] === impWords[prefixLen]) prefixLen++;
+
+    // Find longest common suffix (from end)
+    let suffixLenO = origWords.length, suffixLenI = impWords.length;
+    while (suffixLenO > prefixLen && suffixLenI > prefixLen &&
+           origWords[suffixLenO-1] === impWords[suffixLenI-1]) {
+      suffixLenO--; suffixLenI--;
+    }
+
+    const segs = [];
+    if (prefixLen > 0)
+      segs.push({ type: 'keep', text: origWords.slice(0, prefixLen).join('') });
+    if (suffixLenO > prefixLen)
+      segs.push({ type: 'remove', text: origWords.slice(prefixLen, suffixLenO).join('') });
+    if (suffixLenI > prefixLen)
+      segs.push({ type: 'add', text: impWords.slice(prefixLen, suffixLenI).join('') });
+    if (suffixLenO < origWords.length)
+      segs.push({ type: 'keep', text: origWords.slice(suffixLenO).join('') });
+
+    return segs.length > 1 ? segs : [{ type: 'keep', text: improved }];
+  }
+
+  const hasChanges = segments.some(s => s.type !== 'keep');
+
+  const copy = () => {
+    navigator.clipboard.writeText(bullet.improved || bullet.original).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="diff-bullet-block" onClick={copy} title="Klicken um zu kopieren">
+      {/* Keyword badges */}
+      {(bullet.keywords_added||[]).length > 0 && (
+        <div style={{display:'flex',gap:4,marginBottom:8,flexWrap:'wrap'}}>
+          {bullet.keywords_added.map((k,i) => (
+            <span key={i} className="tag green" style={{fontSize:10,padding:'2px 8px'}}>+{k}</span>
+          ))}
+        </div>
+      )}
+
+      {/* Inline diff render */}
+      <div className="diff-text">
+        {segments.map((seg, i) => {
+          if (seg.type === 'keep')   return <span key={i} className="diff-keep">{seg.text}</span>;
+          if (seg.type === 'remove') return <span key={i} className="diff-remove">{seg.text}</span>;
+          if (seg.type === 'add')    return <span key={i} className="diff-add">{seg.text}</span>;
+          return null;
+        })}
+      </div>
+
+      {/* Note */}
+      {bullet.improvement_notes && (
+        <div className="diff-note">{bullet.improvement_notes}</div>
+      )}
+
+      {/* Copy feedback */}
+      <div className={`diff-copy-hint ${copied ? 'copied' : ''}`}>
+        {copied
+          ? <><CheckIcon/> Kopiert!</>
+          : <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopieren</>
+        }
+      </div>
+    </div>
+  );
+}
+
+// ── Suggested Bullets Section Component ─────────────────────────────────
+function SuggestedBulletsSection({ injectionReport }) {
+  const [open, setOpen] = useState(true);
+  const [copiedIdx, setCopiedIdx] = useState(null); // "blockIdx-optIdx"
+
+  // Pull suggestions from injection_report.log — entries generated by generateBulletSuggestions
+  // Format: { keyword, options: [...], note, category }
+  // Also support direct suggested_bullets array on the result if backend sends it
+  const suggestions = injectionReport?.suggested_bullets_generated > 0
+    ? (injectionReport?.log || [])
+        .filter(entry => Array.isArray(entry.options) && entry.options.length > 0)
+    : [];
+
+  if (!suggestions.length) return null;
+
+  const copyToClipboard = (text, key) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedIdx(key);
+      setTimeout(() => setCopiedIdx(null), 2000);
+    });
+  };
+
+  const catClass = (cat) => {
+    if (!cat) return 'hard';
+    const c = cat.toLowerCase();
+    if (c.includes('tool') || c.includes('tech')) return 'tools';
+    if (c.includes('soft') || c.includes('competenc') || c.includes('kern')) return 'soft';
+    if (c.includes('industry') || c.includes('branch') || c.includes('domain')) return 'industry';
+    return 'hard';
+  };
+
+  const catLabel = (cat) => {
+    if (!cat) return 'skill';
+    const c = cat.toLowerCase();
+    if (c.includes('tool') || c.includes('tech')) return 'tool';
+    if (c.includes('soft') || c.includes('competenc')) return 'soft skill';
+    if (c.includes('industry') || c.includes('branch')) return 'industry';
+    return 'hard skill';
+  };
+
+  return (
+    <div className="sugg-section" style={{marginTop:8}}>
+      <div className="sugg-section-header" onClick={() => setOpen(!open)}>
+        <div className="sugg-section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Suggested Bullets to Add
+          <span className="sugg-badge">{suggestions.length} keyword{suggestions.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <span style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:'var(--text-muted)',letterSpacing:.5}}>
+            CLICK OPTION TO COPY
+          </span>
+          <ChevronIcon open={open}/>
+        </div>
+      </div>
+
+      {open && (
+        <div className="sugg-section-body">
+          <div className="sugg-section-desc">
+            These keywords couldn't be naturally woven into your existing bullets.
+            Pick the option closest to something you've actually done — edit in your own numbers/context — then paste it into the right job on your resume.
+          </div>
+
+          {suggestions.map((item, blockIdx) => (
+            <div className="sugg-keyword-block" key={blockIdx}>
+              <div className="sugg-keyword-header">
+                <span className="sugg-keyword-name">{item.keyword}</span>
+                <span className={`sugg-keyword-cat ${catClass(item.category)}`}>
+                  {catLabel(item.category)}
+                </span>
+                {item.note && (
+                  <span className="sugg-note" style={{marginBottom:0,marginLeft:4}}></span>
+                )}
+              </div>
+              <div className="sugg-options">
+                {(item.options || []).map((opt, optIdx) => {
+                  const key = `${blockIdx}-${optIdx}`;
+                  const isCopied = copiedIdx === key;
+                  return (
+                    <button
+                      key={optIdx}
+                      className={`sugg-option ${isCopied ? 'copied' : ''}`}
+                      onClick={() => copyToClipboard(opt, key)}
+                    >
+                      <span className="sugg-option-num">{optIdx + 1}</span>
+                      <span className="sugg-option-text">{opt}</span>
+                      <span className="sugg-option-copy">
+                        {isCopied ? (
+                          <span style={{color:'var(--green)',display:'flex',alignItems:'center',gap:4}}>
+                            <CheckIcon/> Copied
+                          </span>
+                        ) : 'Copy'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ResumeOptimizer(){
   const[file,setFile]=useState(null);const[jobDesc,setJobDesc]=useState("");const[webhookUrl,setWebhookUrl]=useState(N8N_WEBHOOK_URL);const[loading,setLoading]=useState(false);const[result,setResult]=useState(null);const[error,setError]=useState(null);const[dragging,setDragging]=useState(false);const[pipelineStep,setPipelineStep]=useState(0);const fileInputRef=useRef(null);const isReady=file&&jobDesc.trim().length>20;
@@ -317,7 +627,38 @@ export default function ResumeOptimizer(){
 
         {r.ats_details&&(<Accordion title="Stage 3 — ATS Match" icon="03" color="yellow">{(r.ats_details.skill_gaps||[]).length>0&&(<div style={{marginBottom:16}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--red)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Skill Gaps</div><ul className="item-list">{r.ats_details.skill_gaps.map((g,i)=>(<li key={i}><span className={`tag ${g.importance==='critical'?'red':'yellow'}`} style={{fontSize:10,padding:"2px 8px"}}>{g.importance}</span><span><strong>{g.skill}</strong> — {g.suggestion}</span></li>))}</ul></div>)}{(r.ats_details.format_issues||[]).length>0&&(<div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Format Issues</div><ul className="item-list">{r.ats_details.format_issues.map((f,i)=><li key={i}><span style={{color:"var(--yellow)"}}>!</span> {f}</li>)}</ul></div>)}</Accordion>)}
 
-        {(r.optimized_bullets||[]).length>0&&(<Accordion title="Stage 4 — Optimized Bullets" icon="04" color="green" defaultOpen={true}>{r.optimized_bullets.map((b,i)=>(<div className="bullet-compare" key={i}><div className="bullet-label orig">Original</div><div className="bullet-text orig">{b.original}</div><div className="bullet-label improved">Optimized</div><div className="bullet-text improved">{b.improved}</div>{b.keywords_added&&b.keywords_added.length>0&&(<div className="kw-added">{b.keywords_added.map((k,j)=><span key={j} className="tag green" style={{fontSize:10,padding:"2px 8px"}}>+{k}</span>)}</div>)}</div>))}{(r.new_bullets_suggested||[]).length>0&&(<div style={{marginTop:16}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--blue)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Suggested New</div><ul className="item-list">{r.new_bullets_suggested.map((b,i)=>(<li key={i}><span style={{color:"var(--blue)"}}><ArrowRightIcon/></span><div><div>{b.bullet}</div><div style={{fontSize:11,color:"var(--text-dim)",marginTop:4}}>{b.reason}</div></div></li>))}</ul></div>)}</Accordion>)}
+        {(r.optimized_bullets||[]).length>0&&(
+          <Accordion title="Stage 4 — Suggested Edits" icon="04" color="green" defaultOpen={true}>
+            <div style={{fontSize:12,color:'var(--text-dim)',marginBottom:16,lineHeight:1.6,padding:'10px 14px',background:'rgba(0,206,201,0.04)',borderLeft:'2px solid rgba(0,206,201,0.3)',borderRadius:'0 6px 6px 0'}}>
+              Minimale, chirurgische Änderungen an deinen echten Bullets — wie Jobscan. <span style={{color:'var(--red)',textDecoration:'line-through',opacity:.7}}>Rot</span> = wird entfernt, <span style={{color:'var(--green)'}}>Grün</span> = wird eingefügt. Klicke einen Bullet um ihn zu kopieren.
+            </div>
+            {r.optimized_bullets.filter(b => b.improved && b.improved !== b.original).map((b,i)=>(
+              <InlineDiffBullet key={i} bullet={b} />
+            ))}
+            {r.optimized_bullets.every(b => !b.improved || b.improved === b.original) && (
+              <div style={{color:'var(--text-dim)',fontSize:13,padding:12}}>Alle Bullets sind bereits optimal für dieses JD.</div>
+            )}
+            {(r.new_bullets_suggested||[]).length>0&&(
+              <div style={{marginTop:20}}>
+                <div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--blue)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Neue Bullets vorgeschlagen</div>
+                <ul className="item-list">
+                  {r.new_bullets_suggested.map((b,i)=>(
+                    <li key={i}>
+                      <span style={{color:"var(--blue)"}}><ArrowRightIcon/></span>
+                      <div>
+                        <div style={{fontSize:13,lineHeight:1.6}}>{b.bullet}</div>
+                        <div style={{fontSize:11,color:"var(--text-dim)",marginTop:4}}>{b.reason}</div>
+                        {(b.keywords_covered||[]).length>0&&<div style={{marginTop:4,display:'flex',gap:4,flexWrap:'wrap'}}>{b.keywords_covered.map((k,j)=><span key={j} className="tag green" style={{fontSize:10,padding:'2px 8px'}}>+{k}</span>)}</div>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Accordion>
+        )}
+
+        {r.injection_report&&<SuggestedBulletsSection injectionReport={r.injection_report}/>}
 
         {plan.optimized_summary&&(<div className="summary-box"><h3><SparkleIcon size={16}/> Optimized Summary</h3><p>{plan.optimized_summary}</p></div>)}
 
