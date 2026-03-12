@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 const N8N_WEBHOOK_URL = "YOUR_N8N_WEBHOOK_URL_HERE";
 
@@ -54,6 +54,37 @@ const styles = `
   .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .freq-table-wrap{margin-bottom:24px}.freq-table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.freq-table-header h3{font-size:12px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:8px}.freq-filter-tabs{display:flex;gap:6px}.freq-filter-tab{font-size:10px;font-family:'Space Mono',monospace;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}.freq-filter-tab.active{border-color:var(--accent);color:var(--accent-light);background:rgba(108,92,231,0.08)}.freq-table{width:100%;border-collapse:collapse;font-size:13px}.freq-table th{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}.freq-table th:last-child,.freq-table td:last-child{text-align:center}.freq-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}.freq-table tr:last-child td{border-bottom:none}.freq-table tr:hover td{background:rgba(255,255,255,0.02)}.freq-kw{font-weight:500;color:var(--text)}.freq-count{font-family:'Space Mono',monospace;font-size:12px;font-weight:700}.freq-count.zero{color:var(--red)}.freq-count.match{color:var(--green)}.freq-count.over{color:var(--text-dim)}.freq-bar-cell{width:120px}.freq-mini-bar{height:4px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:3px}.freq-mini-fill{height:100%;border-radius:99px}.freq-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.freq-category{font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── Side-by-side layout ───────────────────────────────────────── */
+  .split-layout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:20px;align-items:start;margin-top:28px}
+  @media(max-width:1024px){.split-layout{grid-template-columns:1fr!important}.resume-col{position:static!important}}
+  .analysis-col{min-width:0}
+  .resume-col{position:sticky;top:20px;min-width:0}
+
+  /* ── Resume Preview Panel ──────────────────────────────────────── */
+  .resume-preview-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+  .resume-preview-bar{background:var(--surface-2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .resume-preview-title{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
+  .resume-legend{display:flex;align-items:center;gap:10px;font-size:10px;font-family:'Space Mono',monospace;color:var(--text-dim);flex-wrap:wrap;margin-top:4px;padding:0 14px 8px}
+  .resume-legend-item{display:flex;align-items:center;gap:4px}
+  .resume-legend-dot{display:inline-block;width:9px;height:9px;border-radius:2px;flex-shrink:0}
+  .highlight-toggle{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace;cursor:pointer;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;transition:all .2s;letter-spacing:.5px}
+  .highlight-toggle:hover{border-color:var(--accent);color:var(--accent-light)}
+  .highlight-toggle.on{border-color:rgba(0,206,201,0.4);color:var(--green);background:rgba(0,206,201,0.06)}
+  .toggle-dot{width:24px;height:14px;border-radius:99px;background:var(--surface-3);border:1px solid var(--border);position:relative;transition:background .2s;flex-shrink:0}
+  .toggle-dot::after{content:'';position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;background:var(--text-muted);transition:all .2s}
+  .highlight-toggle.on .toggle-dot{background:rgba(0,206,201,0.2);border-color:var(--green)}
+  .highlight-toggle.on .toggle-dot::after{left:12px;background:var(--green)}
+  .kw-strip{padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;flex-wrap:wrap;gap:5px;max-height:96px;overflow-y:auto}
+  .kw-pill{cursor:pointer;border:1px solid transparent;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:500;transition:all .15s;font-family:'DM Sans',sans-serif}
+  .kw-pill.matched{background:rgba(0,206,201,0.08);color:var(--green);border-color:rgba(0,206,201,0.15)}
+  .kw-pill.matched:hover,.kw-pill.matched.active{background:rgba(0,206,201,0.2);border-color:rgba(0,206,201,0.5)}
+  .kw-pill.injected{background:rgba(254,202,87,0.08);color:var(--yellow);border-color:rgba(254,202,87,0.15)}
+  .kw-pill.injected:hover,.kw-pill.injected.active{background:rgba(254,202,87,0.2);border-color:rgba(254,202,87,0.5)}
+  .resume-iframe-wrap{background:#f5f5f5;width:100%;overflow-y:auto;max-height:calc(100vh - 120px);min-height:500px}
+  .resume-iframe-wrap iframe{width:100%;border:none;display:block}
+  .kw-count-badge{font-size:9px;font-family:'Space Mono',monospace;padding:1px 7px;border-radius:99px;background:rgba(0,206,201,0.1);color:var(--green);border:1px solid rgba(0,206,201,0.2)}
+  .resume-dl-bar{padding:10px 14px;border-top:1px solid var(--border);background:var(--surface-2);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
   /* ── Inline Diff Bullets (Jobscan style) ───────────────────────── */
   .diff-bullet-block{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
@@ -312,6 +343,139 @@ const DEMO_RESULT = {
 
 function Accordion({title,icon,color,children,defaultOpen=false}){const[open,setOpen]=useState(defaultOpen);return(<div className="accordion"><div className="accordion-header" onClick={()=>setOpen(!open)}><h3 style={{color:`var(--${color})`}}>{icon} {title}</h3><ChevronIcon open={open}/></div>{open&&<div className="accordion-body">{children}</div>}</div>)}
 function ScoreRing({score,color}){const r=30,c=2*Math.PI*r,offset=c-(score/100)*c;return(<div className="score-ring"><svg width="72" height="72" viewBox="0 0 72 72"><circle className="bg" cx="36" cy="36" r={r} fill="none" strokeWidth="6"/><circle className="fg" cx="36" cy="36" r={r} fill="none" strokeWidth="6" stroke={color} strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"/></svg><div className="score-text" style={{color}}>{score}</div></div>)}
+
+// ── Resume Preview with Keyword Highlights (side panel) ─────────────────
+function ResumePreview({ html, matchedKeywords, missingKeywords, downloadAsDocx, saveAsPdf, downloadHtml }) {
+  const [highlights, setHighlights] = useState(true);
+  const [activeKw, setActiveKw]     = useState(null);
+  const iframeRef = useRef(null);
+
+  const buildHighlightedHtml = (rawHtml, matched, missing, active, on) => {
+    if (!rawHtml) return '';
+    let clean = rawHtml
+      .replace(/<hr[^>]*>\s*<div[^>]*suggestions[\s\S]*?<\/body>/i, '</body>')
+      .replace(/<div[^>]*page-break[\s\S]*?<\/body>/i, '</body>')
+      .replace(/<div[^>]*suggestions-wrapper[\s\S]*?<\/div>\s*(<\/body>)/i, '$1');
+
+    const highlightCss = `<style>
+      mark.kw-m{background:rgba(0,206,201,0.2);color:inherit;border-radius:2px;padding:0 1px;border-bottom:2px solid rgba(0,206,201,0.55)}
+      mark.kw-i{background:rgba(254,202,87,0.25);color:inherit;border-radius:2px;padding:0 1px;border-bottom:2px solid rgba(254,202,87,0.65)}
+      mark.kw-active{background:rgba(108,92,231,0.3)!important;border-bottom-color:#6c5ce7!important;box-shadow:0 0 0 2px rgba(108,92,231,0.25)}
+      ${!on ? 'mark{background:none!important;border:none!important;box-shadow:none!important}' : ''}
+    </style>`;
+
+    const bodyMatch = clean.match(/<body([^>]*)>([\s\S]*)<\/body>/i);
+    if (!bodyMatch) return clean.replace('</head>', highlightCss + '</head>');
+    let body = bodyMatch[2];
+
+    const tags = [];
+    let safe = body.replace(/<[^>]+>/g, t => { tags.push(t); return `\x00${tags.length-1}\x00`; });
+
+    const allKws = [
+      ...[...matched].sort((a,b)=>b.length-a.length).map(k=>({k,cls:'kw-m'})),
+      ...[...missing].sort((a,b)=>b.length-a.length).map(k=>({k,cls:'kw-i'})),
+    ];
+    allKws.forEach(({k,cls}) => {
+      if (!k||k.length<2) return;
+      const esc = k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      const isActive = active&&k.toLowerCase()===active.toLowerCase();
+      safe = safe.replace(new RegExp(`(${esc})`, 'gi'),
+        `<mark class="${cls}${isActive?' kw-active':''}">$1</mark>`);
+    });
+    safe = safe.replace(/\x00(\d+)\x00/g, (_,i)=>tags[+i]);
+
+    return clean
+      .replace('</head>', highlightCss+'</head>')
+      .replace(/<body([^>]*)>[\s\S]*<\/body>/i, `<body$1>${safe}</body>`);
+  };
+
+  const writeIframe = (content) => {
+    const f = iframeRef.current;
+    if (!f) return;
+    const doc = f.contentDocument||f.contentWindow?.document;
+    if (!doc) return;
+    doc.open(); doc.write(content); doc.close();
+    setTimeout(()=>{ try{ const h=doc.body?.scrollHeight; if(h) f.style.height=(h+30)+'px'; }catch(e){} }, 150);
+  };
+
+  const scrollTo = (kw) => {
+    const next = activeKw===kw ? null : kw;
+    setActiveKw(next);
+    if (!next) return;
+    setTimeout(()=>{
+      try{
+        const f=iframeRef.current;
+        const doc=f?.contentDocument||f?.contentWindow?.document;
+        doc?.querySelector('mark.kw-active')?.scrollIntoView({behavior:'smooth',block:'center'});
+      }catch(e){}
+    }, 80);
+  };
+
+  useEffect(()=>{
+    writeIframe(buildHighlightedHtml(html, matchedKeywords, missingKeywords, activeKw, highlights));
+  }, [highlights, activeKw, html]); // eslint-disable-line
+
+  const total = (matchedKeywords||[]).length + (missingKeywords||[]).length;
+
+  return (
+    <div className="resume-preview-wrap">
+      <div className="resume-preview-bar">
+        <div className="resume-preview-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Resume Preview
+          {highlights&&<span className="kw-count-badge">{total} keywords</span>}
+        </div>
+        <button className={`highlight-toggle ${highlights?'on':''}`} onClick={()=>{setHighlights(h=>!h);setActiveKw(null);}}>
+          <span className="toggle-dot"/>
+          {highlights?'Highlights ON':'Highlights OFF'}
+        </button>
+      </div>
+
+      {highlights&&(
+        <div className="resume-legend">
+          <div className="resume-legend-item">
+            <span className="resume-legend-dot" style={{background:'rgba(0,206,201,0.35)',border:'1.5px solid rgba(0,206,201,0.6)'}}/>
+            <span>Matched</span>
+          </div>
+          <div className="resume-legend-item">
+            <span className="resume-legend-dot" style={{background:'rgba(254,202,87,0.35)',border:'1.5px solid rgba(254,202,87,0.65)'}}/>
+            <span>Injected</span>
+          </div>
+          {activeKw&&(
+            <div className="resume-legend-item" style={{color:'var(--accent-light)'}}>
+              <span className="resume-legend-dot" style={{background:'rgba(108,92,231,0.35)',border:'1.5px solid rgba(108,92,231,0.6)'}}/>
+              <span>→ {activeKw}</span>
+              <button onClick={()=>setActiveKw(null)} style={{background:'none',border:'none',color:'var(--text-muted)',cursor:'pointer',padding:'0 4px',fontSize:11}}>✕</button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {highlights&&(
+        <div className="kw-strip">
+          {(matchedKeywords||[]).map((kw,i)=>(
+            <button key={i} className={`kw-pill matched ${activeKw===kw?'active':''}`} onClick={()=>scrollTo(kw)}>{kw}</button>
+          ))}
+          {(missingKeywords||[]).map((kw,i)=>(
+            <button key={i} className={`kw-pill injected ${activeKw===kw?'active':''}`} onClick={()=>scrollTo(kw)}>{kw}</button>
+          ))}
+        </div>
+      )}
+
+      <div className="resume-iframe-wrap">
+        <iframe ref={iframeRef} title="Resume" sandbox="allow-same-origin"
+          style={{width:'100%',minHeight:500,border:'none',display:'block'}}/>
+      </div>
+
+      <div className="resume-dl-bar">
+        <span style={{fontSize:10,color:'var(--text-muted)',fontFamily:"'Space Mono',monospace",letterSpacing:.5}}>DOWNLOAD</span>
+        <button className="dl-btn primary" style={{fontSize:11,padding:'7px 14px'}} onClick={()=>downloadAsDocx(html)}><FileTextIcon/> .DOC</button>
+        <button className="dl-btn secondary" style={{fontSize:11,padding:'7px 14px'}} onClick={()=>saveAsPdf(html)}><PdfIcon/> PDF</button>
+        <button className="dl-btn tertiary" style={{fontSize:11,padding:'7px 14px'}} onClick={()=>downloadHtml(html)}><DownloadIcon/> HTML</button>
+      </div>
+    </div>
+  );
+}
 
 // ── Inline Diff Bullet — Jobscan-style ──────────────────────────────────
 function InlineDiffBullet({ bullet }) {
@@ -581,124 +745,121 @@ export default function ResumeOptimizer(){
       {error&&<div className="error-banner">{error}</div>}
 
       {r&&(<div className="results">
-        {/* Download Section - TOP of results */}
-        {hasResume&&(<div className="download-section" style={{marginTop:0,marginBottom:28}}>
-          <h3>Your Optimized Resume is Ready</h3>
-          <p>AI-rewritten, ATS-optimized, and ready to submit. Choose your preferred format below.</p>
-          <div className="download-btns">
-            <div style={{textAlign:"center"}}>
-              <button className="dl-btn primary" onClick={()=>downloadAsDocx(r.optimized_resume_html)}><FileTextIcon/> Download .DOC</button>
-              <div className="dl-btn-label">Opens in Word</div>
-            </div>
-            <div style={{textAlign:"center"}}>
-              <button className="dl-btn secondary" onClick={()=>saveAsPdf(r.optimized_resume_html)}><PdfIcon/> Save as PDF</button>
-              <div className="dl-btn-label">Print dialog</div>
-            </div>
-            <div style={{textAlign:"center"}}>
-              <button className="dl-btn tertiary" onClick={()=>downloadHtml(r.optimized_resume_html)}><DownloadIcon/> Download HTML</button>
-              <div className="dl-btn-label">Raw file</div>
-            </div>
-            {r.cover_letter_html&&(<div style={{textAlign:"center"}}>
-              <button className="dl-btn cover" onClick={()=>downloadHtml(r.cover_letter_html,r.cover_letter_filename||'Cover_Letter.html')}><FileTextIcon/> Cover Letter</button>
-              <div className="dl-btn-label">Download</div>
-            </div>)}
-          </div>
-        </div>)}
-
         <div className="results-header">
           <h2>ATS Analysis Report</h2>
           <div className="score-ring-wrap"><ScoreRing score={r.score} color={scoreColor(r.score)}/><div><div style={{fontFamily:"'Space Mono',monospace",fontSize:12,color:"var(--text-dim)",letterSpacing:1,textTransform:"uppercase"}}>ATS Score</div><div style={{fontSize:13,color:"var(--text-dim)",marginTop:2}}>{r.score>=80?"Strong match":r.score>=50?"Needs improvement":"Significant gaps"}</div></div></div>
         </div>
 
-        {Object.keys(bd).length>0&&(<div className="score-bars">{[{key:"keyword_match",label:"Keywords"},{key:"skills_alignment",label:"Skills"},{key:"experience_relevance",label:"Experience"},{key:"formatting",label:"Formatting"}].map(({key,label})=>(<div className="score-bar-card" key={key}><div className="bar-label">{label}</div><div className="bar-track"><div className="bar-fill" style={{width:`${bd[key]||0}%`,background:scoreColor(bd[key]||0)}}/></div><div className="bar-val" style={{color:scoreColor(bd[key]||0)}}>{bd[key]||0}%</div></div>))}</div>)}
+        <div className="split-layout">
+          {/* ── LEFT: Analysis column ── */}
+          <div className="analysis-col">
 
-        <div className="findings-grid">
-          <div className="card"><h3 className="green"><CheckIcon/> Matched ({(r.matched_keywords||[]).length})</h3><div className="tag-list">{(r.matched_keywords||[]).map((k,i)=><span key={i} className="tag green">{k}</span>)}</div></div>
-          <div className="card"><h3 className="red"><XIcon/> Missing ({(r.missing_keywords||[]).length})</h3><div className="tag-list">{(r.missing_keywords||[]).map((k,i)=><span key={i} className="tag red">{k}</span>)}</div></div>
-        </div>
+            {Object.keys(bd).length>0&&(<div className="score-bars">{[{key:"keyword_match",label:"Keywords"},{key:"skills_alignment",label:"Skills"},{key:"experience_relevance",label:"Experience"},{key:"formatting",label:"Formatting"}].map(({key,label})=>(<div className="score-bar-card" key={key}><div className="bar-label">{label}</div><div className="bar-track"><div className="bar-fill" style={{width:`${bd[key]||0}%`,background:scoreColor(bd[key]||0)}}/></div><div className="bar-val" style={{color:scoreColor(bd[key]||0)}}>{bd[key]||0}%</div></div>))}</div>)}
 
-        {(r.keyword_frequency_table||[]).length>0&&(
-          <KeywordFrequencyTable data={r.keyword_frequency_table}/>
-        )}
-
-        {r.jd_analysis&&(<Accordion title="Stage 1 — JD Analysis" icon="01" color="blue"><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginTop:4}}><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--blue)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Hard Skills</div><div className="tag-list">{(r.jd_analysis.hard_skills||[]).map((s,i)=><span key={i} className="tag blue">{typeof s==='string'?s:`${s.skill} (${s.frequency_score})`}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--accent-light)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Soft Skills</div><div className="tag-list">{(r.jd_analysis.soft_skills||[]).map((s,i)=><span key={i} className="tag accent">{s}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Tools & Tech</div><div className="tag-list">{(r.jd_analysis.tools_tech||[]).map((s,i)=><span key={i} className="tag yellow">{s}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--text-dim)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Industry Terms</div><div className="tag-list">{(r.jd_analysis.industry_terms||[]).map((s,i)=><span key={i} className="tag neutral">{s}</span>)}</div></div></div>{(r.jd_analysis.action_verbs||[]).length>0&&(<div style={{marginTop:16}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--green)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Action Verbs</div><div className="tag-list">{r.jd_analysis.action_verbs.map((v,i)=><span key={i} className="tag green">{v}</span>)}</div></div>)}</Accordion>)}
-
-        {r.keyword_variations&&Object.keys(r.keyword_variations).length>0&&(<Accordion title="Stage 2 — Keyword Variations" icon="02" color="accent-light"><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginTop:4}}>{Object.entries(r.keyword_variations).map(([kw,vars])=>(<div key={kw} style={{background:"var(--surface-2)",borderRadius:8,padding:12}}><div style={{fontWeight:600,fontSize:13,marginBottom:6,color:"var(--accent-light)"}}>{kw}</div><div className="tag-list">{(vars||[]).map((v,i)=><span key={i} className="tag neutral">{v}</span>)}</div></div>))}</div></Accordion>)}
-
-        {r.ats_details&&(<Accordion title="Stage 3 — ATS Match" icon="03" color="yellow">{(r.ats_details.skill_gaps||[]).length>0&&(<div style={{marginBottom:16}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--red)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Skill Gaps</div><ul className="item-list">{r.ats_details.skill_gaps.map((g,i)=>(<li key={i}><span className={`tag ${g.importance==='critical'?'red':'yellow'}`} style={{fontSize:10,padding:"2px 8px"}}>{g.importance}</span><span><strong>{g.skill}</strong> — {g.suggestion}</span></li>))}</ul></div>)}{(r.ats_details.format_issues||[]).length>0&&(<div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Format Issues</div><ul className="item-list">{r.ats_details.format_issues.map((f,i)=><li key={i}><span style={{color:"var(--yellow)"}}>!</span> {f}</li>)}</ul></div>)}</Accordion>)}
-
-        {(r.optimized_bullets||[]).length>0&&(
-          <Accordion title="Stage 4 — Suggested Edits" icon="04" color="green" defaultOpen={true}>
-            <div style={{fontSize:12,color:'var(--text-dim)',marginBottom:16,lineHeight:1.6,padding:'10px 14px',background:'rgba(0,206,201,0.04)',borderLeft:'2px solid rgba(0,206,201,0.3)',borderRadius:'0 6px 6px 0'}}>
-              Minimale, chirurgische Änderungen an deinen echten Bullets — wie Jobscan. <span style={{color:'var(--red)',textDecoration:'line-through',opacity:.7}}>Rot</span> = wird entfernt, <span style={{color:'var(--green)'}}>Grün</span> = wird eingefügt. Klicke einen Bullet um ihn zu kopieren.
+            <div className="findings-grid">
+              <div className="card"><h3 className="green"><CheckIcon/> Matched ({(r.matched_keywords||[]).length})</h3><div className="tag-list">{(r.matched_keywords||[]).map((k,i)=><span key={i} className="tag green">{k}</span>)}</div></div>
+              <div className="card"><h3 className="red"><XIcon/> Missing ({(r.missing_keywords||[]).length})</h3><div className="tag-list">{(r.missing_keywords||[]).map((k,i)=><span key={i} className="tag red">{k}</span>)}</div></div>
             </div>
-            {r.optimized_bullets.filter(b => b.improved && b.improved !== b.original).map((b,i)=>(
-              <InlineDiffBullet key={i} bullet={b} />
-            ))}
-            {r.optimized_bullets.every(b => !b.improved || b.improved === b.original) && (
-              <div style={{color:'var(--text-dim)',fontSize:13,padding:12}}>Alle Bullets sind bereits optimal für dieses JD.</div>
+
+            {(r.keyword_frequency_table||[]).length>0&&(
+              <KeywordFrequencyTable data={r.keyword_frequency_table}/>
             )}
-            {(r.new_bullets_suggested||[]).length>0&&(
-              <div style={{marginTop:20}}>
-                <div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--blue)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Neue Bullets vorgeschlagen</div>
-                <ul className="item-list">
-                  {r.new_bullets_suggested.map((b,i)=>(
-                    <li key={i}>
-                      <span style={{color:"var(--blue)"}}><ArrowRightIcon/></span>
-                      <div>
-                        <div style={{fontSize:13,lineHeight:1.6}}>{b.bullet}</div>
-                        <div style={{fontSize:11,color:"var(--text-dim)",marginTop:4}}>{b.reason}</div>
-                        {(b.keywords_covered||[]).length>0&&<div style={{marginTop:4,display:'flex',gap:4,flexWrap:'wrap'}}>{b.keywords_covered.map((k,j)=><span key={j} className="tag green" style={{fontSize:10,padding:'2px 8px'}}>+{k}</span>)}</div>}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+
+            {r.jd_analysis&&(<Accordion title="Stage 1 — JD Analysis" icon="01" color="blue"><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginTop:4}}><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--blue)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Hard Skills</div><div className="tag-list">{(r.jd_analysis.hard_skills||[]).map((s,i)=><span key={i} className="tag blue">{typeof s==='string'?s:`${s.skill} (${s.frequency_score})`}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--accent-light)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Soft Skills</div><div className="tag-list">{(r.jd_analysis.soft_skills||[]).map((s,i)=><span key={i} className="tag accent">{s}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Tools & Tech</div><div className="tag-list">{(r.jd_analysis.tools_tech||[]).map((s,i)=><span key={i} className="tag yellow">{s}</span>)}</div></div><div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--text-dim)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Industry Terms</div><div className="tag-list">{(r.jd_analysis.industry_terms||[]).map((s,i)=><span key={i} className="tag neutral">{s}</span>)}</div></div></div>{(r.jd_analysis.action_verbs||[]).length>0&&(<div style={{marginTop:16}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--green)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Action Verbs</div><div className="tag-list">{r.jd_analysis.action_verbs.map((v,i)=><span key={i} className="tag green">{v}</span>)}</div></div>)}</Accordion>)}
+
+            {r.keyword_variations&&Object.keys(r.keyword_variations).length>0&&(<Accordion title="Stage 2 — Keyword Variations" icon="02" color="accent-light"><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginTop:4}}>{Object.entries(r.keyword_variations).map(([kw,vars])=>(<div key={kw} style={{background:"var(--surface-2)",borderRadius:8,padding:12}}><div style={{fontWeight:600,fontSize:13,marginBottom:6,color:"var(--accent-light)"}}>{kw}</div><div className="tag-list">{(vars||[]).map((v,i)=><span key={i} className="tag neutral">{v}</span>)}</div></div>))}</div></Accordion>)}
+
+            {r.ats_details&&(<Accordion title="Stage 3 — ATS Match" icon="03" color="yellow">{(r.ats_details.skill_gaps||[]).length>0&&(<div style={{marginBottom:16}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--red)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Skill Gaps</div><ul className="item-list">{r.ats_details.skill_gaps.map((g,i)=>(<li key={i}><span className={`tag ${g.importance==='critical'?'red':'yellow'}`} style={{fontSize:10,padding:"2px 8px"}}>{g.importance}</span><span><strong>{g.skill}</strong> — {g.suggestion}</span></li>))}</ul></div>)}{(r.ats_details.format_issues||[]).length>0&&(<div><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Format Issues</div><ul className="item-list">{r.ats_details.format_issues.map((f,i)=><li key={i}><span style={{color:"var(--yellow)"}}>!</span> {f}</li>)}</ul></div>)}</Accordion>)}
+
+            {(r.optimized_bullets||[]).length>0&&(
+              <Accordion title="Stage 4 — Suggested Edits" icon="04" color="green" defaultOpen={true}>
+                <div style={{fontSize:12,color:'var(--text-dim)',marginBottom:16,lineHeight:1.6,padding:'10px 14px',background:'rgba(0,206,201,0.04)',borderLeft:'2px solid rgba(0,206,201,0.3)',borderRadius:'0 6px 6px 0'}}>
+                  Minimal surgical edits to your real bullets. <span style={{color:'var(--red)',textDecoration:'line-through',opacity:.7}}>Red</span> = removed, <span style={{color:'var(--green)'}}>Green</span> = added. Click to copy.
+                </div>
+                {r.optimized_bullets.filter(b=>b.improved&&b.improved!==b.original).map((b,i)=>(
+                  <InlineDiffBullet key={i} bullet={b}/>
+                ))}
+                {r.optimized_bullets.every(b=>!b.improved||b.improved===b.original)&&(
+                  <div style={{color:'var(--text-dim)',fontSize:13,padding:12}}>All bullets are already well-optimised for this JD.</div>
+                )}
+                {(r.new_bullets_suggested||[]).length>0&&(
+                  <div style={{marginTop:20}}>
+                    <div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--blue)",letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>New bullets suggested</div>
+                    <ul className="item-list">
+                      {r.new_bullets_suggested.map((b,i)=>(
+                        <li key={i}>
+                          <span style={{color:"var(--blue)"}}><ArrowRightIcon/></span>
+                          <div>
+                            <div style={{fontSize:13,lineHeight:1.6}}>{b.bullet}</div>
+                            <div style={{fontSize:11,color:"var(--text-dim)",marginTop:4}}>{b.reason}</div>
+                            {(b.keywords_covered||[]).length>0&&<div style={{marginTop:4,display:'flex',gap:4,flexWrap:'wrap'}}>{b.keywords_covered.map((k,j)=><span key={j} className="tag green" style={{fontSize:10,padding:'2px 8px'}}>+{k}</span>)}</div>}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </Accordion>
+            )}
+
+            {r.injection_report&&<SuggestedBulletsSection injectionReport={r.injection_report}/>}
+
+            {plan.optimized_summary&&(<div className="summary-box"><h3><SparkleIcon size={16}/> Optimized Summary</h3><p>{plan.optimized_summary}</p></div>)}
+
+            {plan.skills_section_fix?.suggested_categories&&(<Accordion title="Stage 5 — Skills Reorganization" icon="05" color="accent-light">{(plan.skills_section_fix.add_skills||[]).length>0&&(<div style={{marginBottom:12}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--green)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Add</div><div className="tag-list">{plan.skills_section_fix.add_skills.map((s,i)=><span key={i} className="tag green">+ {s}</span>)}</div></div>)}{(plan.skills_section_fix.remove_skills||[]).length>0&&(<div style={{marginBottom:12}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--red)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Remove</div><div className="tag-list">{plan.skills_section_fix.remove_skills.map((s,i)=><span key={i} className="tag red">- {s}</span>)}</div></div>)}<div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--accent-light)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Layout</div><div className="skills-grid">{plan.skills_section_fix.suggested_categories.map((cat,i)=>(<div key={i} style={{background:"var(--surface-2)",borderRadius:8,padding:12}}><div style={{fontWeight:600,fontSize:12,marginBottom:6}}>{cat.category}</div><div className="tag-list">{cat.skills.map((s,j)=><span key={j} className="tag neutral">{s}</span>)}</div></div>))}</div></Accordion>)}
+
+            {(plan.final_action_items||[]).length>0&&(<div className="card" style={{marginTop:8}}><h3 className="accent"><SparkleIcon size={14}/> Action Items</h3>{plan.final_action_items.map((item,i)=>(<div className="action-item" key={i}><div className={`action-num ${item.impact||'medium'}`}>{item.priority||i+1}</div><div><div className="action-text">{item.action}</div><div className="action-impact" style={{color:item.impact==='high'?'var(--red)':item.impact==='medium'?'var(--yellow)':'var(--green)'}}>{item.impact} impact</div></div></div>))}</div>)}
+
+            {r.cover_letter&&(<div className="cover-letter-section">
+              <h3>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Cover Letter
+              </h3>
+              <div className="cl-meta">
+                {r.cover_letter.job_title&&<span>Role: {r.cover_letter.job_title}</span>}
+                {r.cover_letter.word_count&&<span>Words: {r.cover_letter.word_count}</span>}
+                {r.cover_letter.keywords_included&&<span>Keywords: {r.cover_letter.keywords_included.length} included</span>}
               </div>
-            )}
-          </Accordion>
-        )}
+              <div className="cl-body">
+                <div style={{marginBottom:14,fontWeight:500}}>{r.cover_letter.greeting}</div>
+                {Array.isArray(r.cover_letter.cover_letter_paragraphs)&&r.cover_letter.cover_letter_paragraphs.length>0
+                  ?r.cover_letter.cover_letter_paragraphs.map((para,i)=><p key={i} style={{margin:'0 0 14px 0',lineHeight:1.75,textAlign:'justify'}}>{para}</p>)
+                  :(r.cover_letter.cover_letter||'').split('\n\n').filter(Boolean).map((para,i)=><p key={i} style={{margin:'0 0 14px 0',lineHeight:1.75,textAlign:'justify'}}>{para}</p>)
+                }
+                <div style={{marginTop:16,marginBottom:4}}>Warm regards,</div>
+                <div style={{fontWeight:700}}>{r.cover_letter.candidate_name}</div>
+              </div>
+              {(r.cover_letter.keywords_included||[]).length>0&&(
+                <div>
+                  <div style={{fontSize:10,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Keywords included</div>
+                  <div className="cl-keywords">{r.cover_letter.keywords_included.map((k,i)=><span key={i} className="tag yellow">{k}</span>)}</div>
+                </div>
+              )}
+              {r.cover_letter_html&&(
+                <div style={{marginTop:16,display:'flex',gap:10,flexWrap:'wrap'}}>
+                  <button className="dl-btn cover" style={{fontSize:13,padding:'10px 20px'}} onClick={()=>downloadHtml(r.cover_letter_html,r.cover_letter_filename||'Cover_Letter.html')}><DownloadIcon/> Download Cover Letter</button>
+                  <button className="dl-btn tertiary" style={{fontSize:13,padding:'10px 20px'}} onClick={()=>saveAsPdf(r.cover_letter_html)}><PdfIcon/> Save as PDF</button>
+                </div>
+              )}
+            </div>)}
 
-        {r.injection_report&&<SuggestedBulletsSection injectionReport={r.injection_report}/>}
+          </div>{/* end analysis-col */}
 
-        {plan.optimized_summary&&(<div className="summary-box"><h3><SparkleIcon size={16}/> Optimized Summary</h3><p>{plan.optimized_summary}</p></div>)}
-
-        {plan.skills_section_fix?.suggested_categories&&(<Accordion title="Stage 5 — Skills Reorganization" icon="05" color="accent-light">{(plan.skills_section_fix.add_skills||[]).length>0&&(<div style={{marginBottom:12}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--green)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Add</div><div className="tag-list">{plan.skills_section_fix.add_skills.map((s,i)=><span key={i} className="tag green">+ {s}</span>)}</div></div>)}{(plan.skills_section_fix.remove_skills||[]).length>0&&(<div style={{marginBottom:12}}><div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--red)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Remove</div><div className="tag-list">{plan.skills_section_fix.remove_skills.map((s,i)=><span key={i} className="tag red">- {s}</span>)}</div></div>)}<div style={{fontSize:11,fontFamily:"'Space Mono',monospace",color:"var(--accent-light)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Layout</div><div className="skills-grid">{plan.skills_section_fix.suggested_categories.map((cat,i)=>(<div key={i} style={{background:"var(--surface-2)",borderRadius:8,padding:12}}><div style={{fontWeight:600,fontSize:12,marginBottom:6}}>{cat.category}</div><div className="tag-list">{cat.skills.map((s,j)=><span key={j} className="tag neutral">{s}</span>)}</div></div>))}</div></Accordion>)}
-
-        {(plan.final_action_items||[]).length>0&&(<div className="card" style={{marginTop:8}}><h3 className="accent"><SparkleIcon size={14}/> Action Items</h3>{plan.final_action_items.map((item,i)=>(<div className="action-item" key={i}><div className={`action-num ${item.impact||'medium'}`}>{item.priority||i+1}</div><div><div className="action-text">{item.action}</div><div className="action-impact" style={{color:item.impact==='high'?'var(--red)':item.impact==='medium'?'var(--yellow)':'var(--green)'}}>{item.impact} impact</div></div></div>))}</div>)}
-
-        {r.cover_letter&&(<div className="cover-letter-section">
-          <h3>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Cover Letter
-          </h3>
-          <div className="cl-meta">
-            {r.cover_letter.job_title&&<span>Role: {r.cover_letter.job_title}</span>}
-            {r.cover_letter.word_count&&<span>Words: {r.cover_letter.word_count}</span>}
-            {r.cover_letter.keywords_included&&<span>Keywords: {r.cover_letter.keywords_included.length} included</span>}
-          </div>
-          <div className="cl-body">
-            <div style={{marginBottom:14,fontWeight:500}}>{r.cover_letter.greeting}</div>
-            {Array.isArray(r.cover_letter.cover_letter_paragraphs) && r.cover_letter.cover_letter_paragraphs.length > 0
-              ? r.cover_letter.cover_letter_paragraphs.map((para,i)=><p key={i} style={{margin:'0 0 14px 0',lineHeight:1.75,textAlign:'justify'}}>{para}</p>)
-              : (r.cover_letter.cover_letter||'').split('\n\n').filter(Boolean).map((para,i)=><p key={i} style={{margin:'0 0 14px 0',lineHeight:1.75,textAlign:'justify'}}>{para}</p>)
-            }
-            <div style={{marginTop:16,marginBottom:4}}>Warm regards,</div>
-            <div style={{fontWeight:700}}>{r.cover_letter.candidate_name}</div>
-          </div>
-          {(r.cover_letter.keywords_included||[]).length>0&&(
-            <div>
-              <div style={{fontSize:10,fontFamily:"'Space Mono',monospace",color:"var(--yellow)",letterSpacing:1,textTransform:"uppercase",marginBottom:8}}>Keywords included</div>
-              <div className="cl-keywords">{r.cover_letter.keywords_included.map((k,i)=><span key={i} className="tag yellow">{k}</span>)}</div>
+          {/* ── RIGHT: Sticky resume preview column ── */}
+          {hasResume&&(
+            <div className="resume-col">
+              <ResumePreview
+                html={r.optimized_resume_html}
+                matchedKeywords={r.matched_keywords||[]}
+                missingKeywords={r.missing_keywords||[]}
+                downloadAsDocx={downloadAsDocx}
+                saveAsPdf={saveAsPdf}
+                downloadHtml={downloadHtml}
+              />
             </div>
           )}
-          {r.cover_letter_html&&(
-            <div style={{marginTop:16,display:'flex',gap:10,flexWrap:'wrap'}}>
-              <button className="dl-btn cover" style={{fontSize:13,padding:'10px 20px'}} onClick={()=>downloadHtml(r.cover_letter_html,r.cover_letter_filename||'Cover_Letter.html')}><DownloadIcon/> Download Cover Letter</button>
-              <button className="dl-btn tertiary" style={{fontSize:13,padding:'10px 20px'}} onClick={()=>saveAsPdf(r.cover_letter_html)}><PdfIcon/> Save as PDF</button>
-            </div>
-          )}
-        </div>)}
+
+        </div>{/* end split-layout */}
       </div>)}
-    </div></>
   );
 }
