@@ -869,5 +869,9 @@ export default function ResumeOptimizer(){
 
         </div>{/* end split-layout */}
       </div>)}
+    </div>
+    </div></>
   );
 }
+
+export default ResumeOptimizer;
