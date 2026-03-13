@@ -713,8 +713,7 @@ export default function ResumeOptimizer(){
   const hasResume = r?.optimized_resume_html;
 
   return(
-    <><style>{styles}</style>
-    <div className="app">
+    <div className="app"><style>{styles}</style>
       <div className="header">
         <div className="header-badge"><SparkleIcon size={12}/> ATS Resume Optimizer</div>
         <h1>Beat the ATS.<br/>Land the Interview.</h1>
@@ -867,10 +866,9 @@ export default function ResumeOptimizer(){
             </div>
           )}
 
-        </div>{/* end split-layout */}
+        </div>
       </div>)}
-    </div>
-    </div></>
+    </div></div>
   );
 }
 
