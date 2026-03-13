@@ -55,13 +55,13 @@ const styles = `
   .freq-table-wrap{margin-bottom:24px}.freq-table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.freq-table-header h3{font-size:12px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:8px}.freq-filter-tabs{display:flex;gap:6px}.freq-filter-tab{font-size:10px;font-family:'Space Mono',monospace;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}.freq-filter-tab.active{border-color:var(--accent);color:var(--accent-light);background:rgba(108,92,231,0.08)}.freq-table{width:100%;border-collapse:collapse;font-size:13px}.freq-table th{font-size:10px;font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}.freq-table th:last-child,.freq-table td:last-child{text-align:center}.freq-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}.freq-table tr:last-child td{border-bottom:none}.freq-table tr:hover td{background:rgba(255,255,255,0.02)}.freq-kw{font-weight:500;color:var(--text)}.freq-count{font-family:'Space Mono',monospace;font-size:12px;font-weight:700}.freq-count.zero{color:var(--red)}.freq-count.match{color:var(--green)}.freq-count.over{color:var(--text-dim)}.freq-bar-cell{width:120px}.freq-mini-bar{height:4px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:3px}.freq-mini-fill{height:100%;border-radius:99px}.freq-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.freq-category{font-size:10px;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ── Side-by-side layout ───────────────────────────────────────── */
+  
   .split-layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:24px;align-items:start;margin-top:28px}
   @media(max-width:1100px){.split-layout{grid-template-columns:1fr!important}.resume-col{position:static!important}}
   .analysis-col{min-width:0}
   .resume-col{position:sticky;top:20px;min-width:0}
 
-  /* ── Resume Preview Panel ──────────────────────────────────────── */
+  
   .resume-preview-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
   .resume-preview-bar{background:var(--surface-2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
   .resume-preview-title{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
@@ -86,7 +86,7 @@ const styles = `
   .kw-count-badge{font-size:9px;font-family:'Space Mono',monospace;padding:1px 7px;border-radius:99px;background:rgba(0,206,201,0.1);color:var(--green);border:1px solid rgba(0,206,201,0.2)}
   .resume-dl-bar{padding:10px 14px;border-top:1px solid var(--border);background:var(--surface-2);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-  /* ── Inline Diff Bullets (Jobscan style) ───────────────────────── */
+  
   .diff-bullet-block{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
   .diff-bullet-block:hover{border-color:var(--green);background:rgba(0,206,201,0.03)}
   .diff-text{font-size:13px;line-height:1.7;color:var(--text);margin-bottom:6px}
@@ -98,7 +98,7 @@ const styles = `
   .diff-bullet-block:hover .diff-copy-hint{color:var(--green)}
   .diff-copy-hint.copied{color:var(--green)}
 
-  /* ── Suggested Bullets Section ─────────────────────────────────── */
+  
   .sugg-section{margin-top:8px;border:1px solid rgba(254,202,87,0.2);border-radius:var(--radius);overflow:hidden}
   .sugg-section-header{background:linear-gradient(135deg,rgba(254,202,87,0.07),rgba(254,202,87,0.02));padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .2s;border-bottom:1px solid rgba(254,202,87,0.12)}.sugg-section-header:hover{background:rgba(254,202,87,0.06)}
   .sugg-section-title{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--yellow)}
@@ -528,7 +528,7 @@ function InlineDiffBullet({ bullet }) {
 
   return (
     <div className="diff-bullet-block" onClick={copy} title="Klicken um zu kopieren">
-      {/* Keyword badges */}
+      
       {(bullet.keywords_added||[]).length > 0 && (
         <div style={{display:'flex',gap:4,marginBottom:8,flexWrap:'wrap'}}>
           {bullet.keywords_added.map((k,i) => (
@@ -537,7 +537,7 @@ function InlineDiffBullet({ bullet }) {
         </div>
       )}
 
-      {/* Inline diff render */}
+      
       <div className="diff-text">
         {segments.map((seg, i) => {
           if (seg.type === 'keep')   return <span key={i} className="diff-keep">{seg.text}</span>;
@@ -547,12 +547,12 @@ function InlineDiffBullet({ bullet }) {
         })}
       </div>
 
-      {/* Note */}
+      
       {bullet.improvement_notes && (
         <div className="diff-note">{bullet.improvement_notes}</div>
       )}
 
-      {/* Copy feedback */}
+      
       <div className={`diff-copy-hint ${copied ? 'copied' : ''}`}>
         {copied
           ? <><CheckIcon/> Kopiert!</>
@@ -758,7 +758,7 @@ export default function ResumeOptimizer(){
         </div>
 
         <div className="split-layout">
-          {/* ── LEFT: Analysis column ── */}
+          
           <div className="analysis-col">
 
             {Object.keys(bd).length>0&&(<div className="score-bars">{[{key:"keyword_match",label:"Keywords"},{key:"skills_alignment",label:"Skills"},{key:"experience_relevance",label:"Experience"},{key:"formatting",label:"Formatting"}].map(({key,label})=>(<div className="score-bar-card" key={key}><div className="bar-label">{label}</div><div className="bar-track"><div className="bar-fill" style={{width:`${bd[key]||0}%`,background:scoreColor(bd[key]||0)}}/></div><div className="bar-val" style={{color:scoreColor(bd[key]||0)}}>{bd[key]||0}%</div></div>))}</div>)}
@@ -850,9 +850,9 @@ export default function ResumeOptimizer(){
               )}
             </div>)}
 
-          </div>{/* end analysis-col */}
+          </div>
 
-          {/* ── RIGHT: Sticky resume preview column ── */}
+          
           {hasResume&&(
             <div className="resume-col">
               <ResumePreview
@@ -868,7 +868,7 @@ export default function ResumeOptimizer(){
 
         </div>
       </div>)}
-    </div></div>
+    </div>
   );
 }
 
